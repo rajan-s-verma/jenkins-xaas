@@ -76,7 +76,7 @@ This guide explains how to set up and test the **Jenkins Pipeline Automation Fra
 - Add private key to Jenkins
   - In Jenkins: Manage Jenkins → Credentials → System → Global credentials → Add Credentials
   - Kind: SSH Username with private key
-  - Username: 
+  - Username: git
   - Private Key: paste contents of `/var/jenkins_home/.ssh/id_rsa`
   - ID: github-ssh-creds
 
@@ -124,15 +124,15 @@ chown 1000:1000 /var/jenkins_home/.ssh/known_hosts || true
 
 Edit `Jenkinsfile` in your fork:
 
+- **environment{} block**
+    ```groovy
+    FORKED_BRANCH = 'main'     //Enter branch of your forked repo
+    TARGET_BRANCH = 'main'     //Enker branch of repo created for storing Client Jenkinsfile in step 2
+    ```
 - **Stage: Checkout Generator Repository**
     ```groovy
     url: 'https://github.com/<YOUR_GITHUB_USERNAME>/jenkins-xaas'
-    branch: 'main'
-    credsId: 'github-https-token'
-    ```
-- **Stage: Deploy Jenkinsfile to GitHub**
-    ```groovy
-    targetbranch: 'main'
+    credsId: "${GITHUB_HTTPS_TOKEN}"  // GITHUB_HTTPS_TOKEN if using https url or GITHUB_SSH_TOKEN if using ssh url
     ```
 - **Default REPO_URL parameter (Optional)**
     ```groovy

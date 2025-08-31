@@ -103,6 +103,12 @@ pipeline {
 
         // Path to Jenkinsfile generator inside checked-out repo
         JENKINSFILE_GENERATOR_DIR = "${WORKSPACE}/jenkins-xaas/pipeline-generator"
+
+        // Configure branch of forked repository
+        FORKED_BRANCH = "main"
+
+        // Configure branch of client repo to deploy
+        TARGET_BRANCH = "main"
     }
 
     // Pipeline Stages
@@ -131,7 +137,7 @@ pipeline {
                     */
                     cloneRepo(
                         url: '', // Configure forked repo URL
-                        branch: '', // Configure branch
+                        branch: "${FORKED_BRANCH}",
                         credsId: "", // Configure credsId according to URL style
                         targetDir: 'jenkins-xaas'
                     )
@@ -183,7 +189,7 @@ pipeline {
                     repoUrl: params.REPO_URL,
                     clientName: params.CLIENT_NAME,
                     sourceFile: "${JENKINSFILE_GENERATOR_DIR}/${params.OUTPUT_FILE}",
-                    targetBranch: '' // Configure branch in client repo to deploy Jenkinsfile
+                    targetBranch: "${TARGET_BRANCH}"
                 )
             }
             // Post Actions
@@ -220,7 +226,7 @@ pipeline {
                     script {
                         // Add clickable job URL to build description
                         def jobUrl = "${env.JENKINS_URL}job/${params.CLIENT_NAME}-pipeline/"
-                        def pipelineUrl = """${params.REPO_URL}/${params.CLIENT_NAME}/Jenkinsfile"""
+                        def pipelineUrl = """${params.REPO_URL}/blob/${TARGET_BRANCH}/${params.CLIENT_NAME}/Jenkinsfile"""
                         currentBuild.description = """
                             ${params.CLIENT_NAME} Job Jenkinsfile: <a href="${pipelineUrl}">${pipelineUrl}</a><br/>
                             ${params.CLIENT_NAME} Job URL: <a href="${jobUrl}">${jobUrl}</a>
